@@ -248,6 +248,8 @@
   line-height: 1.1;
   position: relative;
   z-index: 1;
+  width: 100%;
+  overflow-wrap: break-word;
 }
 
 /* ── Author credit — below calendar card, centered ── */
@@ -286,11 +288,11 @@
 .monthLabel {
   display: block;
   font-family: var(--font-display), 'Playfair Display', Georgia, serif;
-  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+  font-size: clamp(1.8rem, 3.2vw, 3rem);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  line-height: 0.92;
+  line-height: 1;
   /* Gold shimmer gradient */
   background: linear-gradient(
     135deg,
@@ -801,7 +803,7 @@
   }
 
   .monthLabel {
-    font-size: clamp(1.9rem, 4vw, 3.2rem);
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
   }
 
   .notesArea {
@@ -844,7 +846,7 @@
   }
 
   .monthLabel {
-    font-size: clamp(1.9rem, 7vw, 2.8rem);
+    font-size: clamp(1.7rem, 6vw, 2.4rem);
   }
 
   .rightPanel {
@@ -914,7 +916,7 @@
   }
 
   .monthLabel {
-    font-size: clamp(1.6rem, 9vw, 2.3rem);
+    font-size: clamp(1.5rem, 8vw, 2rem);
   }
 
   .calendarArea {
