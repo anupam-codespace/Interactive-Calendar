@@ -281,10 +281,6 @@ export function WallCalendar() {
                 <span className={styles.monthLabel}>{monthLabel}</span>
               </div>
             </div>
-            {/* ── Author credit ── */}
-            <div className={styles.authorCredit}>
-              Made by <span className={styles.authorHandle}>@anupamsaha</span>
-            </div>
           </div>
 
           {/* ══ RIGHT: Calendar + notes panel ══ */}
@@ -451,6 +447,17 @@ export function WallCalendar() {
           </div>
 
         </div>
+      </div>
+
+      {/* ── Author credit — outside the calendar, bottom-center ── */}
+      <div className={styles.authorCredit}>
+        Made by{" "}
+        <span
+          className={styles.authorHandle}
+          style={{ color: themeColor }}
+        >
+          @anupamsaha
+        </span>
       </div>
     </main>
   );

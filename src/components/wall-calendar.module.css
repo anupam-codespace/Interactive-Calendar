@@ -249,27 +249,23 @@
   z-index: 1;
 }
 
-/* ── Author credit — bottom-right of hero panel ── */
+/* ── Author credit — below calendar card, centered ── */
 .authorCredit {
-  position: absolute;
-  bottom: 14px;
-  right: 16px;
-  z-index: 10;
-  font-size: 0.62rem;
+  margin-top: 14px;
+  text-align: center;
+  font-size: 0.65rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.45);
-  text-transform: none;
-  pointer-events: none;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.3);
   user-select: none;
+  flex-shrink: 0;
 }
 
 .authorHandle {
   font-weight: 800;
-  letter-spacing: 0.04em;
-  color: color-mix(in srgb, var(--theme-color) 90%, white);
-  opacity: 0.85;
-  transition: opacity 0.2s ease;
+  letter-spacing: 0.05em;
+  /* color set inline via style prop (themeColor) */
+  opacity: 0.9;
 }
 
 .yearText {
