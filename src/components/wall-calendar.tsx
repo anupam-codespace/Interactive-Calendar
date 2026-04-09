@@ -281,6 +281,10 @@ export function WallCalendar() {
                 <span className={styles.monthLabel}>{monthLabel}</span>
               </div>
             </div>
+            {/* ── Author credit ── */}
+            <div className={styles.authorCredit}>
+              Made by <span className={styles.authorHandle}>@anupamsaha</span>
+            </div>
           </div>
 
           {/* ══ RIGHT: Calendar + notes panel ══ */}
