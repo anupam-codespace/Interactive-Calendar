@@ -54,19 +54,23 @@ function getMonthImage(year: number, month: number): string {
   return `/images/${ALL_IMAGES[idx]}`;
 }
 
+/**
+ * Per-month theme colors — rich, saturated palettes for the dark UI.
+ * Each color is used as --theme-color, driving accents, glows, and tints.
+ */
 const MONTH_THEMES: Record<number, string> = {
-  0:  "#1E3A8A", // Jan  – deep blue
-  1:  "#7C3AED", // Feb  – violet
-  2:  "#059669", // Mar  – emerald
-  3:  "#D97706", // Apr  – amber
-  4:  "#047857", // May  – teal-green
-  5:  "#EA580C", // Jun  – orange
-  6:  "#DC2626", // Jul  – red
-  7:  "#B45309", // Aug  – brown-amber
-  8:  "#4338CA", // Sep  – indigo
-  9:  "#BE123C", // Oct  – rose
-  10: "#A16207", // Nov  – yellow-brown
-  11: "#0F766E", // Dec  – cyan-teal
+  0:  "#6c8fff", // Jan  – sapphire blue
+  1:  "#a78bfa", // Feb  – soft violet
+  2:  "#34d399", // Mar  – emerald
+  3:  "#fbbf24", // Apr  – golden amber
+  4:  "#10b981", // May  – teal green
+  5:  "#f97316", // Jun  – vivid orange
+  6:  "#f43f5e", // Jul  – rose red
+  7:  "#d97706", // Aug  – warm amber
+  8:  "#818cf8", // Sep  – indigo
+  9:  "#fb7185", // Oct  – soft coral
+  10: "#facc15", // Nov  – yellow gold
+  11: "#22d3ee", // Dec  – cyan
 };
 
 /* ─── Date helpers ───────────────────────────────────── */
@@ -160,14 +164,9 @@ export function WallCalendar() {
     [currentMonth]
   );
   const monthKey   = useMemo(() => formatMonthKey(currentMonth), [currentMonth]);
-  const themeColor = MONTH_THEMES[currentMonth.getMonth()] || "#007bb5";
+  const themeColor = MONTH_THEMES[currentMonth.getMonth()] || "#7c6aff";
   const imageSrc   = getMonthImage(currentMonth.getFullYear(), currentMonth.getMonth());
 
-  /**
-   * activeRangeKey is ONLY non-null when BOTH dates are selected.
-   * This ensures the PLAN textarea only appears for a completed range,
-   * making the "contextual update" feature clearly visible.
-   */
   const activeRangeKey: string | null =
     rangeStart && rangeEnd ? formatRangeKey(rangeStart, rangeEnd) : null;
 
@@ -176,7 +175,7 @@ export function WallCalendar() {
   /* Hover preview: show projected range end while user is picking */
   const previewEnd = !rangeEnd ? hoverDate : null;
 
-  /* ── Persist monthly note (batched with currentMonth in React 18) ── */
+  /* ── Persist monthly note ── */
   useEffect(() => {
     if (mounted) {
       window.localStorage.setItem(`calendar-month:${monthKey}`, monthlyNote);
@@ -196,43 +195,28 @@ export function WallCalendar() {
   /**
    * shiftMonth: React 18 auto-batches all setX() calls inside an event
    * handler, so currentMonth and monthlyNote update in the SAME render.
-   * This prevents the persist-effect from overwriting the new month's note
-   * with the old month's value.
    */
   function shiftMonth(amount: number) {
     const next        = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + amount, 1);
     const nextMonthKey = formatMonthKey(next);
     setCurrentMonth(next);
-    setMonthlyNote(getStoredMonthNote(nextMonthKey)); // load new month's saved note
+    setMonthlyNote(getStoredMonthNote(nextMonthKey));
     setRangeStart(null);
     setRangeEnd(null);
     setHoverDate(null);
   }
 
-  /**
-   * selectDay:
-   *  1st click → set rangeStart, clear rangeEnd (single pending dot)
-   *  2nd click same day → complete as single-day range
-   *  2nd click before start → swap, complete range
-   *  2nd click after start → complete range naturally
-   *  3rd click (range already complete) → start fresh
-   */
   function selectDay(date: Date) {
     const target = startOfDay(date);
-
     if (!rangeStart || rangeEnd) {
-      // Start a new selection
       setRangeStart(target);
       setRangeEnd(null);
       return;
     }
-
-    // Complete the range
     if (target.getTime() < rangeStart.getTime()) {
       setRangeEnd(rangeStart);
       setRangeStart(target);
     } else {
-      // Same-day or later — always complete (single-day range included)
       setRangeEnd(target);
     }
   }
@@ -264,7 +248,11 @@ export function WallCalendar() {
         {/* ── Binding spirals ── */}
         <div className={styles.bindingBar}>
           {Array.from({ length: 22 }).map((_, i) => (
-            <div key={i} className={styles.spiral} />
+            <div
+              key={i}
+              className={styles.spiral}
+              style={{ "--i": i } as React.CSSProperties}
+            />
           ))}
         </div>
 
@@ -356,14 +344,8 @@ export function WallCalendar() {
                   const isStart = sameDay(date, rangeStart);
                   const isEnd   = sameDay(date, rangeEnd);
 
-                  /**
-                   * isSingle: rangeStart is set but rangeEnd is not yet picked.
-                   * Show as a full filled circle (not half-circle) so the UI
-                   * looks correct while the user is picking the end date.
-                   */
                   const isSingle = isStart && !rangeEnd;
 
-                  /** Range highlight — includes hover preview */
                   const effectiveEnd = rangeEnd ?? previewEnd;
                   const inRange =
                     rangeStart &&
@@ -395,7 +377,6 @@ export function WallCalendar() {
                       className={classes}
                       onClick={() => selectDay(date)}
                       onMouseEnter={() => {
-                        // Only show hover preview while picking the end date
                         if (rangeStart && !rangeEnd) setHoverDate(date);
                       }}
                       onMouseLeave={() => setHoverDate(null)}
@@ -416,7 +397,7 @@ export function WallCalendar() {
               {/* Monthly GOALS */}
               <div className={styles.monthlyNotesCol}>
                 <p className={styles.sectionLabel}>
-                  📅 Goals
+                  ✦ Goals
                   <span className={styles.monthPill}>{monthLabel}</span>
                 </p>
                 <textarea
@@ -434,7 +415,7 @@ export function WallCalendar() {
                 {activeRangeKey ? (
                   <>
                     <p className={styles.sectionLabel}>
-                      🗺 Plan
+                      ◈ Plan
                       {rangeLabel && (
                         <span className={styles.rangeLabelPill}>{rangeLabel}</span>
                       )}
@@ -456,7 +437,7 @@ export function WallCalendar() {
                 ) : (
                   /* State C: nothing selected */
                   <div className={styles.rangeNotesEmpty}>
-                    <span className={styles.emptyIcon}>📅</span>
+                    <span className={styles.emptyIcon}>◇</span>
                     Select a date range to add a plan
                   </div>
                 )}

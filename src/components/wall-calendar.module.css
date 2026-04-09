@@ -1,82 +1,153 @@
-/* ════════════════════════════════════════════════════════════
-   WALL CALENDAR – CSS MODULE
-   Fonts: --font-body (Manrope)  --font-display (Playfair Display)
-   Theme: set via --theme-color on .calendarPaper
-   ════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   PREMIUM WALL CALENDAR — CSS MODULE
+   Design: Dark glassmorphism · Cinematic hero · Luxury typography
+   Palette: Deep obsidian bg · Theme-color accents · Gold shimmer
+   ════════════════════════════════════════════════════════════════ */
 
-/* ── Animations ──────────────────────────────────────────── */
+/* ── Keyframe Animations ───────────────────────────────────────── */
 @keyframes imageFadeIn {
-  from { opacity: 0; transform: scale(1.06); }
-  to   { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: scale(1.08) translateY(6px); filter: blur(4px); }
+  to   { opacity: 1; transform: scale(1) translateY(0);    filter: blur(0); }
 }
 
 @keyframes gridSlideUp {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes notesFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Shell: full viewport ────────────────────────────────── */
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.5; transform: translateX(0); }
+  50%       { opacity: 1;   transform: translateX(5px); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes spiralGlow {
+  0%, 100% { box-shadow: 0 0 4px rgba(255,255,255,0.15), inset 0 1px 1px rgba(255,255,255,0.2); }
+  50%       { box-shadow: 0 0 8px rgba(255,255,255,0.3),  inset 0 1px 1px rgba(255,255,255,0.3); }
+}
+
+@keyframes todayPulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--theme-color) 50%, transparent); }
+  50%       { box-shadow: 0 0 0 4px color-mix(in srgb, var(--theme-color) 0%, transparent); }
+}
+
+@keyframes selectionPop {
+  0%   { transform: scale(0.85); }
+  60%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+
+/* ── Shell: full viewport with ambient background ──────────────── */
 .shell {
   height: 100vh;
   width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Deep multi-layer cinematic background */
   background:
-    radial-gradient(ellipse at 15% 20%, #e3d8cc 0%, transparent 55%),
-    radial-gradient(ellipse at 85% 80%, #d4c9bc 0%, transparent 55%),
-    #ede8e1;
+    radial-gradient(ellipse at 10% 20%,  rgba(99, 60, 210, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 90% 80%,  rgba(30, 80, 180, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 50%,  rgba(120, 40, 160, 0.08) 0%, transparent 70%),
+    linear-gradient(160deg, #0b0b14 0%, #0d0d1a 50%, #090912 100%);
   font-family: var(--font-body), 'Manrope', -apple-system, sans-serif;
   overflow: hidden;
-  padding: 16px;
+  padding: 20px;
 }
 
-/* ── Calendar card ───────────────────────────────────────── */
+/* Subtle animated noise texture overlay */
+.shell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+
+
+/* ── Calendar Card ─────────────────────────────────────────────── */
 .calendarPaper {
-  --theme-color: #1E3A8A;
+  --theme-color: #7c6aff;
   position: relative;
-  background: #ffffff;
+  z-index: 1;
   width: 100%;
-  max-width: 1200px;
-  height: calc(100vh - 32px);
+  max-width: 1180px;
+  height: calc(100vh - 40px);
   max-height: 820px;
-  border-radius: 10px;
+  border-radius: 20px;
+  /* Glass morphism card */
+  background: rgba(16, 16, 28, 0.92);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   box-shadow:
-    0 2px 4px rgba(0,0,0,0.06),
-    0 10px 30px rgba(0,0,0,0.14),
-    0 40px 80px rgba(0,0,0,0.10);
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 40px 80px rgba(0, 0, 0, 0.5),
+    0 80px 160px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255,255,255,0.08);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: box-shadow 0.4s ease;
 }
 
-/* ── Binding / spiral strip ──────────────────────────────── */
+.calendarPaper:hover {
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 8px 32px rgba(0, 0, 0, 0.65),
+    0 40px 100px rgba(0, 0, 0, 0.55),
+    0 80px 160px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+
+/* ── Binding / Spiral Strip ────────────────────────────────────── */
 .bindingBar {
   flex-shrink: 0;
   width: 100%;
-  height: 16px;
-  background: linear-gradient(180deg, #ccc9c2 0%, #bbb8b0 100%);
+  height: 18px;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.06) 0%,
+    rgba(255,255,255,0.03) 50%,
+    rgba(0,0,0,0.2) 100%
+  );
+  border-bottom: 1px solid rgba(255,255,255,0.06);
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  border-bottom: 1px solid #aaa;
   z-index: 10;
 }
 
 .spiral {
   width: 9px;
   height: 9px;
-  background: radial-gradient(circle at 35% 35%, #aaa 0%, #666 100%);
   border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.45), inset 0 1px 1px rgba(255,255,255,0.25);
+  background: radial-gradient(circle at 35% 35%,
+    rgba(255,255,255,0.5) 0%,
+    rgba(180,180,220,0.3) 40%,
+    rgba(80,80,120,0.8) 100%
+  );
+  box-shadow: 0 1px 4px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.3);
+  animation: spiralGlow 3s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 0.1s);
 }
 
-/* ── Main body: horizontal split ─────────────────────────── */
+
+/* ── Main Body: horizontal split ──────────────────────────────── */
 .mainBody {
   flex: 1;
   display: flex;
@@ -85,326 +156,430 @@
   min-height: 0;
 }
 
-/* ══════════════════════════════════════════════════════════
-   LEFT PANEL – Hero image + month branding
-   ══════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════
+   LEFT PANEL – Cinematic Hero Image
+   ══════════════════════════════════════════════════════════════ */
 .heroPanel {
   flex: 0 0 38%;
   position: relative;
   overflow: hidden;
-  background: #111;
+  background: #0b0b14;
+  /* Elegant border separation */
+  border-right: 1px solid rgba(255,255,255,0.06);
 }
 
-/*
-  .mediaItem gains animation via key={monthKey} in React —
-  each month change remounts the <img>, triggering imageFadeIn fresh.
-*/
 .mediaItem {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center top;
   display: block;
-  animation: imageFadeIn 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: imageFadeIn 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .heroPanel:hover .mediaItem {
-  transform: scale(1.03);
-  transition: transform 0.7s ease;
+  transform: scale(1.04);
 }
 
-/* Gradient overlay for text readability */
+/* Multi-layer depth overlay */
 .heroOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    160deg,
-    rgba(0,0,0,0.02) 0%,
-    rgba(0,0,0,0.15) 50%,
-    rgba(0,0,0,0.70) 100%
-  );
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,0.0)  0%,
+      rgba(0,0,0,0.05) 30%,
+      rgba(0,0,0,0.45) 70%,
+      rgba(0,0,0,0.78) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(0,0,0,0) 60%,
+      rgba(0,0,0,0.3) 100%
+    );
   pointer-events: none;
 }
 
-/* Coloured diagonal band at bottom */
+/* Theme-colored diagonal band */
 .themeOverlay {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 180px;
-  background: var(--theme-color);
-  clip-path: polygon(0 55%, 55% 0%, 100% 30%, 100% 100%, 0 100%);
+  height: 200px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--theme-color) 80%, #000) 0%,
+    color-mix(in srgb, var(--theme-color) 60%, #000) 100%
+  );
+  clip-path: polygon(0 48%, 52% 0%, 100% 28%, 100% 100%, 0 100%);
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
-  padding: 24px 32px;
-  transition: background 0.4s ease;
+  padding: 28px 32px;
+  transition: background 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Shimmer line accent across the diagonal */
+.themeOverlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.4) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
 }
 
 .headerContent {
   color: #fff;
   line-height: 1.1;
+  position: relative;
+  z-index: 1;
 }
 
 .yearText {
   display: block;
-  font-size: clamp(0.65rem, 1.2vw, 0.85rem);
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  opacity: 0.82;
+  font-size: clamp(0.6rem, 1.1vw, 0.8rem);
+  font-weight: 700;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  margin-bottom: 4px;
+  opacity: 0.75;
+  margin-bottom: 6px;
+  /* Subtle label shimmer */
+  background: linear-gradient(90deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.85) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .monthLabel {
   display: block;
   font-family: var(--font-display), 'Playfair Display', Georgia, serif;
-  font-size: clamp(2rem, 4.5vw, 3.6rem);
+  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  line-height: 0.95;
+  line-height: 0.92;
+  /* Gold shimmer gradient */
+  background: linear-gradient(
+    135deg,
+    #fff 0%,
+    rgba(255,255,255,0.95) 40%,
+    rgba(255,235,180,0.9) 70%,
+    #fff 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 5s linear infinite;
 }
 
-/* ══════════════════════════════════════════════════════════
-   RIGHT PANEL – Calendar grid + notes
-   ══════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════
+   RIGHT PANEL – Calendar Grid + Notes
+   ══════════════════════════════════════════════════════════════ */
 .rightPanel {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
   overflow: hidden;
+  background: transparent;
 }
 
-/* ── Top: calendar area ──────────────────────────────────── */
+
+/* ── Calendar Area ─────────────────────────────────────────────── */
 .calendarArea {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 20px 24px 14px;
+  padding: 22px 28px 16px;
   min-height: 0;
   overflow: hidden;
 }
 
-/* ── Nav controls bar ────────────────────────────────────── */
+
+/* ── Navigation Controls ───────────────────────────────────────── */
 .controlsRow {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 18px;
   flex-shrink: 0;
 }
 
 .navBtn {
-  padding: 6px 14px;
+  padding: 7px 16px;
   font-family: var(--font-body), sans-serif;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  border: 1.5px solid #d8d8d8;
-  background: #fff;
-  border-radius: 6px;
+  letter-spacing: 0.1em;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  border-radius: 8px;
   cursor: pointer;
-  color: #555;
-  transition: background 0.18s, color 0.18s, border-color 0.18s, transform 0.12s, box-shadow 0.18s;
+  color: rgba(255,255,255,0.55);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
   user-select: none;
+  backdrop-filter: blur(8px);
 }
 
 .navBtn:hover {
-  background: var(--theme-color);
+  background: color-mix(in srgb, var(--theme-color) 20%, rgba(255,255,255,0.05));
   color: #fff;
-  border-color: var(--theme-color);
+  border-color: color-mix(in srgb, var(--theme-color) 60%, transparent);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--theme-color) 35%, transparent);
+  box-shadow:
+    0 4px 16px color-mix(in srgb, var(--theme-color) 25%, transparent),
+    inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 .navBtn:active {
   transform: translateY(0);
+  box-shadow: none;
 }
 
 .navMonthName {
   font-family: var(--font-display), 'Playfair Display', Georgia, serif;
-  font-size: clamp(0.85rem, 2vw, 1.15rem);
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
   font-weight: 700;
-  color: #1a1a1a;
+  color: rgba(255,255,255,0.9);
   flex: 1;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: 0.02em;
 }
 
 .clearBtn {
-  padding: 6px 11px;
+  padding: 7px 13px;
   font-family: var(--font-body), sans-serif;
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  border: 1.5px solid #fbbebe;
-  background: #fff8f8;
-  border-radius: 6px;
+  letter-spacing: 0.08em;
+  border: 1px solid rgba(255, 100, 100, 0.3);
+  background: rgba(255, 60, 60, 0.08);
+  border-radius: 8px;
   cursor: pointer;
-  color: #c0392b;
-  transition: background 0.18s, color 0.18s, transform 0.12s;
+  color: rgba(255, 120, 120, 0.9);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
   user-select: none;
 }
 
 .clearBtn:hover {
-  background: #c0392b;
-  color: #fff;
-  border-color: #c0392b;
+  background: rgba(220, 50, 50, 0.2);
+  color: #ff8888;
+  border-color: rgba(255, 80, 80, 0.5);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 50, 50, 0.2);
 }
 
-/* ── Week day header row ─────────────────────────────────── */
+
+/* ── Week Day Headers ──────────────────────────────────────────── */
 .weekRow {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   flex-shrink: 0;
+  padding: 0 2px;
 }
 
 .weekDay {
   text-align: center;
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   font-weight: 800;
-  color: #a0a0a0;
+  color: rgba(255,255,255,0.22);
   text-transform: uppercase;
-  letter-spacing: 0.09em;
-  padding: 3px 0;
+  letter-spacing: 0.12em;
+  padding: 4px 0;
 }
 
 .weekendText {
-  color: var(--theme-color);
-  opacity: 0.8;
+  color: color-mix(in srgb, var(--theme-color) 70%, rgba(255,255,255,0.4));
+  opacity: 0.9;
 }
 
-/* ── Date grid ───────────────────────────────────────────── */
-/*
-  key={monthKey} is on this div in React — remount triggers gridSlideUp
-  animation automatically on every month navigation.
-*/
+
+/* ── Date Grid ─────────────────────────────────────────────────── */
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px 1px;
+  gap: 3px 2px;
   flex: 1;
   align-content: start;
-  animation: gridSlideUp 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: gridSlideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  padding: 0 2px;
 }
 
-/* ── Individual day cell ─────────────────────────────────── */
+
+/* ── Individual Day Cell ───────────────────────────────────────── */
 .day {
   aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: clamp(0.68rem, 1.5vw, 0.88rem);
+  font-size: clamp(0.68rem, 1.4vw, 0.86rem);
   font-weight: 600;
-  color: #2d2d2d;
+  color: rgba(255,255,255,0.75);
   background: transparent;
-  border: 2px solid transparent;
+  border: 1.5px solid transparent;
   border-radius: 50%;
-  transition: background 0.13s, color 0.13s, transform 0.12s;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
   width: 100%;
-  max-width: 42px;
+  max-width: 44px;
   margin: 0 auto;
   outline: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  position: relative;
 }
 
 .dayMuted {
-  opacity: 0.18;
+  opacity: 0.12;
   pointer-events: none;
 }
 
 .dayWeekend {
-  color: var(--theme-color);
+  color: color-mix(in srgb, var(--theme-color) 70%, rgba(255,255,255,0.5));
 }
 
 .day:hover:not(.dayMuted):not(.dayStart):not(.dayEnd):not(.daySingle) {
-  background: #f0f0f0;
-  transform: scale(1.1);
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+  transform: scale(1.12);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
+/* Today indicator — glowing ring */
 .dayToday {
-  border-color: var(--theme-color);
-  color: var(--theme-color);
+  border-color: color-mix(in srgb, var(--theme-color) 80%, white);
+  color: #fff;
   font-weight: 800;
+  animation: todayPulse 2.5s ease-in-out infinite;
 }
 
-/* ── Single pending selection (only start picked, no end yet) ── */
-/*
-  Uses a full circle with theme color, same as a complete selection,
-  so the UI doesn't look broken while the user picks the end date.
-*/
+/* ── Single pending selection ────────────────────────────────── */
 .daySingle {
   background: var(--theme-color) !important;
   color: #fff !important;
   border-radius: 50% !important;
   max-width: 100%;
   border-color: transparent !important;
-  transform: scale(1.08);
+  transform: scale(1.1);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--theme-color) 30%, transparent),
+    0 4px 16px color-mix(in srgb, var(--theme-color) 50%, transparent) !important;
+  animation: selectionPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-/* ── Range selection styles ─────────────────────────────── */
-/* Start of a multi-day range → left half-circle */
+/* ── Range Selection Styles ─────────────────────────────────── */
 .dayStart {
   background: var(--theme-color) !important;
   color: #fff !important;
   border-radius: 50% 0 0 50% !important;
   max-width: 100%;
   border-color: transparent !important;
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--theme-color) 20%, transparent),
+    0 4px 14px color-mix(in srgb, var(--theme-color) 45%, transparent) !important;
 }
 
-/* End of a multi-day range → right half-circle */
 .dayEnd {
   background: var(--theme-color) !important;
   color: #fff !important;
   border-radius: 0 50% 50% 0 !important;
   max-width: 100%;
   border-color: transparent !important;
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--theme-color) 20%, transparent),
+    0 4px 14px color-mix(in srgb, var(--theme-color) 45%, transparent) !important;
 }
 
-/* When start === end (single-day via double-click): full circle */
+/* Single-day range: full circle */
 .dayStart.dayEnd {
   border-radius: 50% !important;
 }
 
-/* Days between start and end */
+/* Midrange days */
 .dayInRange {
-  background: color-mix(in srgb, var(--theme-color) 16%, transparent) !important;
-  color: var(--theme-color) !important;
+  background: color-mix(in srgb, var(--theme-color) 14%, rgba(255,255,255,0.03)) !important;
+  color: color-mix(in srgb, var(--theme-color) 80%, white) !important;
   border-radius: 0 !important;
   max-width: 100%;
+  border-color: transparent !important;
 }
 
-/* ── Bottom: Notes area ──────────────────────────────────── */
+
+/* ══════════════════════════════════════════════════════════════
+   NOTES AREA — Luxury glass bottom bar
+   ══════════════════════════════════════════════════════════════ */
 .notesArea {
   flex-shrink: 0;
-  border-top: 1px solid #ebebeb;
+  border-top: 1px solid rgba(255,255,255,0.06);
   display: flex;
   flex-direction: row;
-  height: 168px;
-  background: #fafaf9;
-  animation: notesFadeIn 0.4s ease both;
+  height: 175px;
+  background: rgba(255,255,255,0.018);
+  backdrop-filter: blur(10px);
+  animation: notesFadeIn 0.45s ease both;
+  position: relative;
 }
 
-/* Monthly notes column */
+/* Subtle top glow line */
+.notesArea::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--theme-color) 40%, transparent) 50%,
+    transparent 100%
+  );
+}
+
+/* Monthly goals column */
 .monthlyNotesCol {
-  flex: 0 0 42%;
-  border-right: 1px solid #ebebeb;
-  padding: 12px 16px;
+  flex: 0 0 44%;
+  border-right: 1px solid rgba(255,255,255,0.05);
+  padding: 14px 18px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -414,64 +589,23 @@
 /* Range/event notes column */
 .rangeNotesCol {
   flex: 1;
-  padding: 12px 16px;
+  padding: 14px 18px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   overflow: hidden;
 }
 
-/* ── Empty states ────────────────────────────────────────── */
-.rangeNotesEmpty {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #c8c8c8;
-  font-size: 0.75rem;
-  font-style: italic;
-  letter-spacing: 0.03em;
-  gap: 6px;
-}
 
-.emptyIcon {
-  font-size: 1.1rem;
-  opacity: 0.6;
-}
-
-/* Hint shown while user is picking the end date */
-.rangeNotesHint {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 0.75rem;
-  color: var(--theme-color);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  opacity: 0.75;
-}
-
-.hintIcon {
-  font-size: 1rem;
-  animation: hintPulse 1.2s ease-in-out infinite;
-}
-
-@keyframes hintPulse {
-  0%, 100% { opacity: 0.5; transform: translateX(0); }
-  50%       { opacity: 1;   transform: translateX(4px); }
-}
-
-/* ── Section label ───────────────────────────────────────── */
+/* ── Section Labels ─────────────────────────────────────────── */
 .sectionLabel {
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 800;
-  color: #555;
+  color: rgba(255,255,255,0.35);
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  border-bottom: 2.5px solid var(--theme-color);
-  padding-bottom: 5px;
+  letter-spacing: 0.18em;
+  border-bottom: 1.5px solid color-mix(in srgb, var(--theme-color) 50%, transparent);
+  padding-bottom: 6px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -480,38 +614,41 @@
   overflow: hidden;
 }
 
-/* Month pill (shown next to "Goals" label) */
+/* Month pill */
 .monthPill {
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   font-weight: 700;
-  background: color-mix(in srgb, var(--theme-color) 12%, transparent);
-  color: var(--theme-color);
+  background: color-mix(in srgb, var(--theme-color) 18%, rgba(255,255,255,0.05));
+  color: color-mix(in srgb, var(--theme-color) 90%, white);
+  border: 1px solid color-mix(in srgb, var(--theme-color) 30%, transparent);
   border-radius: 100px;
-  padding: 2px 9px;
-  letter-spacing: 0.03em;
+  padding: 2px 10px;
+  letter-spacing: 0.06em;
   flex-shrink: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Range label pill (shown next to "Plan" label) */
+/* Range label pill */
 .rangeLabelPill {
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   font-weight: 700;
-  background: color-mix(in srgb, var(--theme-color) 14%, transparent);
-  color: var(--theme-color);
+  background: color-mix(in srgb, var(--theme-color) 18%, rgba(255,255,255,0.05));
+  color: color-mix(in srgb, var(--theme-color) 90%, white);
+  border: 1px solid color-mix(in srgb, var(--theme-color) 30%, transparent);
   border-radius: 100px;
-  padding: 2px 9px;
-  letter-spacing: 0.03em;
+  padding: 2px 10px;
+  letter-spacing: 0.05em;
   flex-shrink: 0;
-  max-width: 160px;
+  max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* ── Monthly goals textarea (lined-paper look) ───────────── */
+
+/* ── Monthly Goals Textarea (lined-paper) ───────────────────── */
 .notesInput {
   flex: 1;
   width: 100%;
@@ -519,143 +656,186 @@
   background: transparent;
   resize: none;
   font-family: var(--font-body), sans-serif;
-  font-size: 0.82rem;
-  line-height: 1.95;
+  font-size: 0.8rem;
+  line-height: 2;
   outline: none;
-  color: #444;
+  color: rgba(255,255,255,0.7);
   background-image: repeating-linear-gradient(
     transparent,
-    transparent 30px,
-    #e8e8e8 30px,
-    #e8e8e8 31px
+    transparent 31px,
+    rgba(255,255,255,0.05) 31px,
+    rgba(255,255,255,0.05) 32px
   );
   background-attachment: local;
-  padding-top: 3px;
+  padding-top: 2px;
   caret-color: var(--theme-color);
   min-height: 0;
+  transition: color 0.2s ease;
 }
 
 .notesInput::placeholder {
-  color: #ccc;
+  color: rgba(255,255,255,0.2);
   font-style: italic;
 }
 
 .notesInput:focus {
+  color: rgba(255,255,255,0.88);
   outline: none;
 }
 
-/* ── Range plan textarea ─────────────────────────────────── */
+
+/* ── Range Plan Textarea ─────────────────────────────────────── */
 .rangeNoteInput {
   flex: 1;
   width: 100%;
-  border: 1.5px solid #e5e5e5;
-  border-radius: 7px;
-  background: #fff;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
   resize: none;
   font-family: var(--font-body), sans-serif;
-  font-size: 0.82rem;
-  line-height: 1.65;
+  font-size: 0.8rem;
+  line-height: 1.7;
   outline: none;
-  color: #444;
-  padding: 8px 10px;
+  color: rgba(255,255,255,0.7);
+  padding: 9px 12px;
   caret-color: var(--theme-color);
-  transition: border-color 0.18s, box-shadow 0.18s;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
   min-height: 0;
 }
 
 .rangeNoteInput:focus {
-  border-color: var(--theme-color);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-color) 10%, transparent);
+  border-color: color-mix(in srgb, var(--theme-color) 60%, transparent);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.88);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--theme-color) 12%, transparent),
+    inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
 .rangeNoteInput::placeholder {
-  color: #ccc;
+  color: rgba(255,255,255,0.18);
   font-style: italic;
 }
 
-/* ════════════════════════════════════════════════════════════
-   RESPONSIVE — BENTO STACKING
-   ════════════════════════════════════════════════════════════ */
 
-/* ── Large tablets (≤ 1024px) ─────────────────────────────── */
+/* ── Empty & Hint States ─────────────────────────────────────── */
+.rangeNotesEmpty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  color: rgba(255,255,255,0.2);
+  font-size: 0.72rem;
+  font-style: italic;
+  letter-spacing: 0.03em;
+}
+
+.emptyIcon {
+  font-size: 1.4rem;
+  opacity: 0.4;
+  display: block;
+}
+
+.rangeNotesHint {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 0.72rem;
+  color: color-mix(in srgb, var(--theme-color) 80%, white);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  opacity: 0.8;
+}
+
+.hintIcon {
+  font-size: 1rem;
+  animation: hintPulse 1.1s ease-in-out infinite;
+  display: inline-block;
+}
+
+
+/* ════════════════════════════════════════════════════════════════
+   RESPONSIVE — Bento Stacking
+   ════════════════════════════════════════════════════════════════ */
+
+/* Large tablets (≤ 1024px) */
 @media (max-width: 1024px) {
   .calendarPaper {
-    max-width: 900px;
+    max-width: 880px;
   }
 
   .heroPanel {
-    flex: 0 0 35%;
+    flex: 0 0 34%;
   }
 
   .themeOverlay {
-    height: 160px;
-    padding: 20px 24px;
+    height: 175px;
+    padding: 22px 26px;
   }
 
   .monthLabel {
-    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-size: clamp(1.9rem, 4vw, 3.2rem);
   }
 
   .notesArea {
-    height: 155px;
+    height: 160px;
   }
 }
 
-/* ── Tablet portrait (≤ 768px): Bento stack vertically ───── */
+/* Tablet portrait (≤ 768px): vertical bento stack */
 @media (max-width: 768px) {
-
-  /* Shell scrolls naturally — no fixed height */
   .shell {
     height: auto;
     min-height: 100vh;
-    padding: 12px;
+    padding: 14px;
     overflow-y: auto;
     align-items: flex-start;
   }
 
-  /* Card becomes full-height — height is driven by content */
   .calendarPaper {
     height: auto;
     max-height: none;
     flex-direction: column;
+    border-radius: 16px;
   }
 
-  /* Stack left/right panels vertically */
   .mainBody {
     flex-direction: column;
     overflow: visible;
   }
 
-  /* ── Hero Bento card (top) ── */
   .heroPanel {
     flex: 0 0 auto;
     width: 100%;
-    height: 230px;
-    border-radius: 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    height: 240px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
   .themeOverlay {
-    height: 140px;
+    height: 150px;
     clip-path: polygon(0 50%, 50% 0%, 100% 28%, 100% 100%, 0 100%);
-    padding: 16px 24px;
+    padding: 18px 24px;
   }
 
   .monthLabel {
-    font-size: clamp(1.8rem, 7vw, 2.6rem);
+    font-size: clamp(1.9rem, 7vw, 2.8rem);
   }
 
-  .yearText {
-    font-size: 0.75rem;
-  }
-
-  /* ── Calendar Bento card ── */
   .rightPanel {
     overflow: visible;
   }
 
   .calendarArea {
-    padding: 16px 16px 12px;
+    padding: 18px 18px 14px;
     overflow: visible;
   }
 
@@ -663,50 +843,44 @@
     align-content: stretch;
   }
 
-  /* Larger tap targets on mobile */
   .day {
     font-size: 0.84rem;
-    max-width: 44px;
-    min-height: 40px; /* ensure touch-friendly */
+    max-width: 46px;
+    min-height: 42px;
   }
 
-  /* ── Notes: stack as two Bento cards ── */
   .notesArea {
     height: auto;
     flex-direction: column;
-    border-top: 1px solid #ebebeb;
   }
 
   .monthlyNotesCol {
     flex: none;
     border-right: none;
-    border-bottom: 1px solid #ebebeb;
-    height: 150px;
-    padding: 14px 16px;
-    /* Subtle Bento card treatment */
-    background: #fafaf9;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    height: 155px;
+    padding: 14px 18px;
   }
 
   .rangeNotesCol {
     flex: none;
-    height: 140px;
-    padding: 14px 16px;
-    background: #f7f7f6;
+    height: 145px;
+    padding: 14px 18px;
   }
 }
 
-/* ── Mobile (≤ 480px) ────────────────────────────────────── */
+/* Mobile (≤ 480px) */
 @media (max-width: 480px) {
   .shell {
-    padding: 8px;
+    padding: 10px;
   }
 
   .calendarPaper {
-    border-radius: 8px;
+    border-radius: 12px;
   }
 
   .bindingBar {
-    height: 13px;
+    height: 14px;
   }
 
   .spiral {
@@ -714,113 +888,104 @@
     height: 7px;
   }
 
-  /* Compact hero */
   .heroPanel {
-    height: 190px;
+    height: 200px;
   }
 
   .themeOverlay {
-    height: 125px;
-    clip-path: polygon(0 45%, 50% 0%, 100% 25%, 100% 100%, 0 100%);
-    padding: 12px 18px;
+    height: 135px;
+    padding: 14px 20px;
   }
 
   .monthLabel {
-    font-size: clamp(1.5rem, 9vw, 2.2rem);
+    font-size: clamp(1.6rem, 9vw, 2.3rem);
   }
 
-  /* Calendar grid */
   .calendarArea {
-    padding: 12px 10px 10px;
+    padding: 14px 12px 10px;
   }
 
   .controlsRow {
-    gap: 5px;
-    margin-bottom: 10px;
+    gap: 6px;
+    margin-bottom: 12px;
   }
 
   .navBtn {
-    padding: 5px 10px;
-    font-size: 0.65rem;
-  }
-
-  .clearBtn {
-    padding: 5px 8px;
+    padding: 6px 11px;
     font-size: 0.62rem;
   }
 
+  .clearBtn {
+    padding: 6px 9px;
+    font-size: 0.6rem;
+  }
+
   .navMonthName {
-    font-size: 0.78rem;
+    font-size: 0.82rem;
   }
 
   .weekDay {
-    font-size: 0.55rem;
+    font-size: 0.54rem;
   }
 
-  /* Touch-friendly day cells */
   .day {
-    font-size: 0.73rem;
-    max-width: 38px;
+    font-size: 0.74rem;
+    max-width: 40px;
     min-height: 38px;
   }
 
-  /* Notes */
   .notesArea {
     flex-direction: column;
   }
 
   .monthlyNotesCol {
-    height: 130px;
-    padding: 10px 12px;
+    height: 135px;
+    padding: 12px 13px;
   }
 
   .rangeNotesCol {
-    height: 120px;
-    padding: 10px 12px;
+    height: 125px;
+    padding: 12px 13px;
   }
 
-  .notesInput {
-    font-size: 0.78rem;
-  }
-
+  .notesInput,
   .rangeNoteInput {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
   }
 
   .sectionLabel {
-    font-size: 0.56rem;
+    font-size: 0.54rem;
   }
 
   .monthPill,
   .rangeLabelPill {
-    font-size: 0.55rem;
-    padding: 1px 7px;
+    font-size: 0.52rem;
+    padding: 2px 7px;
   }
 
-  /* Hint text on very small screens */
   .rangeNotesHint {
-    font-size: 0.68rem;
+    font-size: 0.66rem;
   }
 }
 
-/* ── Very small screens (≤ 360px) ───────────────────────── */
+/* Very small screens (≤ 360px) */
 @media (max-width: 360px) {
   .calendarArea {
     padding: 10px 8px 8px;
   }
 
   .heroPanel {
-    height: 160px;
+    height: 168px;
   }
 
   .navBtn {
-    padding: 4px 8px;
-    font-size: 0.6rem;
+    padding: 5px 8px;
+    font-size: 0.58rem;
   }
 
   .day {
-    font-size: 0.68rem;
-    max-width: 34px;
-    min-height: 34px;
+    font-size: 0.67rem;
+    max-width: 36px;
+    min-height: 35px;
   }
 }

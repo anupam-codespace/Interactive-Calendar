@@ -14,8 +14,8 @@ const displayFont = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Gallery Wall Calendar",
-  description: "An interactive wall calendar with range selection and notes.",
+  title: "Wall Calendar — Premium Interactive Planner",
+  description: "A stunning interactive wall calendar. Select date ranges, plan your month, and set goals with a cinematic, dark-mode experience.",
   icons: {
     icon: "/icon.png",
     shortcut: "/icon.png",
