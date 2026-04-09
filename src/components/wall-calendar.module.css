@@ -1,10 +1,26 @@
 /* ════════════════════════════════════════════════════════════
-   WALL CALENDAR – CSS MODULE  (Horizontal Split · Viewport-Fit)
+   WALL CALENDAR – CSS MODULE
    Fonts: --font-body (Manrope)  --font-display (Playfair Display)
    Theme: set via --theme-color on .calendarPaper
    ════════════════════════════════════════════════════════════ */
 
-/* ── Shell: full viewport, no scroll on desktop ──────────── */
+/* ── Animations ──────────────────────────────────────────── */
+@keyframes imageFadeIn {
+  from { opacity: 0; transform: scale(1.06); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes gridSlideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes notesFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Shell: full viewport ────────────────────────────────── */
 .shell {
   height: 100vh;
   width: 100vw;
@@ -79,17 +95,22 @@
   background: #111;
 }
 
+/*
+  .mediaItem gains animation via key={monthKey} in React —
+  each month change remounts the <img>, triggering imageFadeIn fresh.
+*/
 .mediaItem {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
   display: block;
-  transition: transform 0.6s ease;
+  animation: imageFadeIn 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 .heroPanel:hover .mediaItem {
   transform: scale(1.03);
+  transition: transform 0.7s ease;
 }
 
 /* Gradient overlay for text readability */
@@ -118,6 +139,7 @@
   align-items: flex-end;
   justify-content: flex-start;
   padding: 24px 32px;
+  transition: background 0.4s ease;
 }
 
 .headerContent {
@@ -187,16 +209,22 @@
   border-radius: 6px;
   cursor: pointer;
   color: #555;
-  transition: background 0.16s, color 0.16s, border-color 0.16s, transform 0.12s;
+  transition: background 0.18s, color 0.18s, border-color 0.18s, transform 0.12s, box-shadow 0.18s;
   white-space: nowrap;
   flex-shrink: 0;
+  user-select: none;
 }
 
 .navBtn:hover {
   background: var(--theme-color);
   color: #fff;
   border-color: var(--theme-color);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--theme-color) 35%, transparent);
+}
+
+.navBtn:active {
+  transform: translateY(0);
 }
 
 .navMonthName {
@@ -223,9 +251,10 @@
   border-radius: 6px;
   cursor: pointer;
   color: #c0392b;
-  transition: background 0.16s, color 0.16s, transform 0.12s;
+  transition: background 0.18s, color 0.18s, transform 0.12s;
   white-space: nowrap;
   flex-shrink: 0;
+  user-select: none;
 }
 
 .clearBtn:hover {
@@ -259,12 +288,17 @@
 }
 
 /* ── Date grid ───────────────────────────────────────────── */
+/*
+  key={monthKey} is on this div in React — remount triggers gridSlideUp
+  animation automatically on every month navigation.
+*/
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 2px 1px;
   flex: 1;
   align-content: start;
+  animation: gridSlideUp 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 /* ── Individual day cell ─────────────────────────────────── */
@@ -285,6 +319,8 @@
   max-width: 42px;
   margin: 0 auto;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .dayMuted {
@@ -296,7 +332,7 @@
   color: var(--theme-color);
 }
 
-.day:hover:not(.dayMuted):not(.dayStart):not(.dayEnd) {
+.day:hover:not(.dayMuted):not(.dayStart):not(.dayEnd):not(.daySingle) {
   background: #f0f0f0;
   transform: scale(1.1);
 }
@@ -307,7 +343,22 @@
   font-weight: 800;
 }
 
-/* Range selection styles */
+/* ── Single pending selection (only start picked, no end yet) ── */
+/*
+  Uses a full circle with theme color, same as a complete selection,
+  so the UI doesn't look broken while the user picks the end date.
+*/
+.daySingle {
+  background: var(--theme-color) !important;
+  color: #fff !important;
+  border-radius: 50% !important;
+  max-width: 100%;
+  border-color: transparent !important;
+  transform: scale(1.08);
+}
+
+/* ── Range selection styles ─────────────────────────────── */
+/* Start of a multi-day range → left half-circle */
 .dayStart {
   background: var(--theme-color) !important;
   color: #fff !important;
@@ -316,6 +367,7 @@
   border-color: transparent !important;
 }
 
+/* End of a multi-day range → right half-circle */
 .dayEnd {
   background: var(--theme-color) !important;
   color: #fff !important;
@@ -324,10 +376,12 @@
   border-color: transparent !important;
 }
 
+/* When start === end (single-day via double-click): full circle */
 .dayStart.dayEnd {
   border-radius: 50% !important;
 }
 
+/* Days between start and end */
 .dayInRange {
   background: color-mix(in srgb, var(--theme-color) 16%, transparent) !important;
   color: var(--theme-color) !important;
@@ -341,13 +395,14 @@
   border-top: 1px solid #ebebeb;
   display: flex;
   flex-direction: row;
-  height: 160px;
+  height: 168px;
   background: #fafaf9;
+  animation: notesFadeIn 0.4s ease both;
 }
 
 /* Monthly notes column */
 .monthlyNotesCol {
-  flex: 0 0 40%;
+  flex: 0 0 42%;
   border-right: 1px solid #ebebeb;
   padding: 12px 16px;
   display: flex;
@@ -366,7 +421,7 @@
   overflow: hidden;
 }
 
-/* Empty state for range notes */
+/* ── Empty states ────────────────────────────────────────── */
 .rangeNotesEmpty {
   flex: 1;
   display: flex;
@@ -384,6 +439,30 @@
   opacity: 0.6;
 }
 
+/* Hint shown while user is picking the end date */
+.rangeNotesHint {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--theme-color);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  opacity: 0.75;
+}
+
+.hintIcon {
+  font-size: 1rem;
+  animation: hintPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.5; transform: translateX(0); }
+  50%       { opacity: 1;   transform: translateX(4px); }
+}
+
 /* ── Section label ───────────────────────────────────────── */
 .sectionLabel {
   font-size: 0.62rem;
@@ -396,14 +475,43 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: nowrap;
   flex-shrink: 0;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-/* ── Monthly notes textarea (lined-paper look) ───────────── */
+/* Month pill (shown next to "Goals" label) */
+.monthPill {
+  font-size: 0.6rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--theme-color) 12%, transparent);
+  color: var(--theme-color);
+  border-radius: 100px;
+  padding: 2px 9px;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Range label pill (shown next to "Plan" label) */
+.rangeLabelPill {
+  font-size: 0.6rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--theme-color) 14%, transparent);
+  color: var(--theme-color);
+  border-radius: 100px;
+  padding: 2px 9px;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Monthly goals textarea (lined-paper look) ───────────── */
 .notesInput {
   flex: 1;
   width: 100%;
@@ -436,23 +544,7 @@
   outline: none;
 }
 
-/* ── Range note pill ─────────────────────────────────────── */
-.rangeLabelPill {
-  font-size: 0.62rem;
-  font-weight: 700;
-  background: color-mix(in srgb, var(--theme-color) 14%, transparent);
-  color: var(--theme-color);
-  border-radius: 100px;
-  padding: 1px 9px;
-  letter-spacing: 0.03em;
-  flex-shrink: 0;
-  max-width: 140px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* ── Range note textarea ─────────────────────────────────── */
+/* ── Range plan textarea ─────────────────────────────────── */
 .rangeNoteInput {
   flex: 1;
   width: 100%;
@@ -467,14 +559,13 @@
   color: #444;
   padding: 8px 10px;
   caret-color: var(--theme-color);
-  transition: border-color 0.16s, box-shadow 0.16s;
+  transition: border-color 0.18s, box-shadow 0.18s;
   min-height: 0;
 }
 
 .rangeNoteInput:focus {
   border-color: var(--theme-color);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-color) 10%, transparent);
-  background: #fff;
 }
 
 .rangeNoteInput::placeholder {
@@ -483,7 +574,7 @@
 }
 
 /* ════════════════════════════════════════════════════════════
-   RESPONSIVE BREAKPOINTS
+   RESPONSIVE — BENTO STACKING
    ════════════════════════════════════════════════════════════ */
 
 /* ── Large tablets (≤ 1024px) ─────────────────────────────── */
@@ -506,12 +597,14 @@
   }
 
   .notesArea {
-    height: 150px;
+    height: 155px;
   }
 }
 
-/* ── Tablet portrait (≤ 768px): stack vertically ─────────── */
+/* ── Tablet portrait (≤ 768px): Bento stack vertically ───── */
 @media (max-width: 768px) {
+
+  /* Shell scrolls naturally — no fixed height */
   .shell {
     height: auto;
     min-height: 100vh;
@@ -520,22 +613,26 @@
     align-items: flex-start;
   }
 
+  /* Card becomes full-height — height is driven by content */
   .calendarPaper {
     height: auto;
     max-height: none;
     flex-direction: column;
   }
 
+  /* Stack left/right panels vertically */
   .mainBody {
     flex-direction: column;
     overflow: visible;
   }
 
-  /* Hero goes on top */
+  /* ── Hero Bento card (top) ── */
   .heroPanel {
     flex: 0 0 auto;
     width: 100%;
-    height: 220px;
+    height: 230px;
+    border-radius: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
   }
 
   .themeOverlay {
@@ -552,6 +649,7 @@
     font-size: 0.75rem;
   }
 
+  /* ── Calendar Bento card ── */
   .rightPanel {
     overflow: visible;
   }
@@ -565,12 +663,14 @@
     align-content: stretch;
   }
 
+  /* Larger tap targets on mobile */
   .day {
-    font-size: 0.82rem;
-    max-width: 40px;
+    font-size: 0.84rem;
+    max-width: 44px;
+    min-height: 40px; /* ensure touch-friendly */
   }
 
-  /* Notes area: stack vertically on tablet */
+  /* ── Notes: stack as two Bento cards ── */
   .notesArea {
     height: auto;
     flex-direction: column;
@@ -581,14 +681,17 @@
     flex: none;
     border-right: none;
     border-bottom: 1px solid #ebebeb;
-    height: 140px;
+    height: 150px;
     padding: 14px 16px;
+    /* Subtle Bento card treatment */
+    background: #fafaf9;
   }
 
   .rangeNotesCol {
     flex: none;
-    height: 130px;
+    height: 140px;
     padding: 14px 16px;
+    background: #f7f7f6;
   }
 }
 
@@ -599,7 +702,7 @@
   }
 
   .calendarPaper {
-    border-radius: 6px;
+    border-radius: 8px;
   }
 
   .bindingBar {
@@ -611,32 +714,34 @@
     height: 7px;
   }
 
+  /* Compact hero */
   .heroPanel {
-    height: 180px;
+    height: 190px;
   }
 
   .themeOverlay {
-    height: 120px;
+    height: 125px;
     clip-path: polygon(0 45%, 50% 0%, 100% 25%, 100% 100%, 0 100%);
-    padding: 12px 16px;
+    padding: 12px 18px;
   }
 
   .monthLabel {
     font-size: clamp(1.5rem, 9vw, 2.2rem);
   }
 
+  /* Calendar grid */
   .calendarArea {
     padding: 12px 10px 10px;
   }
 
   .controlsRow {
-    gap: 6px;
+    gap: 5px;
     margin-bottom: 10px;
   }
 
   .navBtn {
     padding: 5px 10px;
-    font-size: 0.66rem;
+    font-size: 0.65rem;
   }
 
   .clearBtn {
@@ -645,29 +750,32 @@
   }
 
   .navMonthName {
-    font-size: 0.82rem;
+    font-size: 0.78rem;
   }
 
   .weekDay {
     font-size: 0.55rem;
   }
 
+  /* Touch-friendly day cells */
   .day {
-    font-size: 0.72rem;
-    max-width: 36px;
+    font-size: 0.73rem;
+    max-width: 38px;
+    min-height: 38px;
   }
 
+  /* Notes */
   .notesArea {
     flex-direction: column;
   }
 
   .monthlyNotesCol {
-    height: 120px;
+    height: 130px;
     padding: 10px 12px;
   }
 
   .rangeNotesCol {
-    height: 110px;
+    height: 120px;
     padding: 10px 12px;
   }
 
@@ -681,5 +789,38 @@
 
   .sectionLabel {
     font-size: 0.56rem;
+  }
+
+  .monthPill,
+  .rangeLabelPill {
+    font-size: 0.55rem;
+    padding: 1px 7px;
+  }
+
+  /* Hint text on very small screens */
+  .rangeNotesHint {
+    font-size: 0.68rem;
+  }
+}
+
+/* ── Very small screens (≤ 360px) ───────────────────────── */
+@media (max-width: 360px) {
+  .calendarArea {
+    padding: 10px 8px 8px;
+  }
+
+  .heroPanel {
+    height: 160px;
+  }
+
+  .navBtn {
+    padding: 4px 8px;
+    font-size: 0.6rem;
+  }
+
+  .day {
+    font-size: 0.68rem;
+    max-width: 34px;
+    min-height: 34px;
   }
 }
