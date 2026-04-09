@@ -1,0 +1,555 @@
+/* ════════════════════════════════════════════════
+   WALL CALENDAR – CSS MODULE
+   Fonts:  --font-body (Manrope),  --font-display (Playfair Display)
+   Theme:  set via --theme-color on .calendarPaper
+   ════════════════════════════════════════════════ */
+
+/* ── Shell / wall background ─────────────────────── */
+.shell {
+  min-height: 100vh;
+  width: 100%;
+  background:
+    radial-gradient(ellipse at 20% 20%, #e8ddd0 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #d9cfc3 0%, transparent 60%),
+    #f0ebe3;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 20px 60px;
+  font-family: var(--font-body), 'Inter', -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── Calendar paper card ─────────────────────────── */
+.calendarPaper {
+  background: #fff;
+  width: 100%;
+  max-width: 860px;
+  border-radius: 6px;
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.06),
+    0 8px 24px rgba(0,0,0,0.12),
+    0 32px 64px rgba(0,0,0,0.10);
+  position: relative;
+  overflow: hidden; /* clip the hero image */
+}
+
+/* ── Binding / spiral strip ──────────────────────── */
+.bindingBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 18px;
+  background: #d1cfc9;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  z-index: 10;
+  border-bottom: 1px solid #bbb;
+}
+
+.spiral {
+  width: 10px;
+  height: 10px;
+  background: #888;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.3);
+}
+
+/* ── Hero image area ─────────────────────────────── */
+.heroSection {
+  position: relative;
+  width: 100%;
+  height: 340px;
+  margin-top: 18px; /* clear the binding bar */
+  overflow: hidden;
+  background: #1a1a2e;
+}
+
+.mediaItem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Diagonal coloured overlay at the bottom with month name */
+.themeOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 160px;
+  background: var(--theme-color);
+  clip-path: polygon(0 55%, 45% 0%, 100% 35%, 100% 100%, 0 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 24px 40px;
+}
+
+.headerContent {
+  text-align: right;
+  color: #fff;
+  line-height: 1;
+}
+
+.yearText {
+  display: block;
+  font-family: var(--font-body), sans-serif;
+  font-size: clamp(0.9rem, 2vw, 1.4rem);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  opacity: 0.85;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.monthLabel {
+  display: block;
+  font-family: var(--font-display), 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 5.5vw, 3.8rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Bottom split layout ─────────────────────────── */
+.bottomSection {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  padding: 0;
+}
+
+/* ── LEFT: Notes sidebar ─────────────────────────── */
+.notesSection {
+  flex: 0 0 220px;
+  border-right: 1px solid #ebebeb;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #fafaf9;
+}
+
+/* ── Label used for both Notes and Trip/Event Notes ─ */
+.sectionLabel {
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  border-bottom: 3px solid var(--theme-color);
+  padding-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Monthly notes textarea (lined paper look) ──── */
+.notesInput {
+  flex: 1;
+  width: 100%;
+  min-height: 180px;
+  border: none;
+  background: transparent;
+  resize: none;
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.88rem;
+  line-height: 2;
+  outline: none;
+  color: #444;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    #e5e5e5 31px,
+    #e5e5e5 32px
+  );
+  background-attachment: local;
+  padding-top: 4px;
+  caret-color: var(--theme-color);
+}
+
+.notesInput::placeholder {
+  color: #bbb;
+  font-style: italic;
+}
+
+/* ── RIGHT: Calendar grid section ────────────────── */
+.gridSection {
+  flex: 1;
+  padding: 28px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0; /* prevent overflow */
+}
+
+/* ── Nav controls bar ────────────────────────────── */
+.controlsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.navBtn {
+  padding: 7px 14px;
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1.5px solid #e0e0e0;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #555;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+  white-space: nowrap;
+}
+
+.navBtn:hover {
+  background: var(--theme-color);
+  color: #fff;
+  border-color: var(--theme-color);
+}
+
+.navMonthName {
+  font-family: var(--font-display), 'Playfair Display', Georgia, serif;
+  font-size: clamp(0.9rem, 2.5vw, 1.15rem);
+  font-weight: 700;
+  color: #222;
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.clearBtn {
+  padding: 7px 12px;
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1.5px solid #f0c0c0;
+  background: #fff5f5;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #c0392b;
+  transition: background 0.18s, color 0.18s;
+  white-space: nowrap;
+}
+
+.clearBtn:hover {
+  background: #c0392b;
+  color: #fff;
+  border-color: #c0392b;
+}
+
+/* ── Week day header row ─────────────────────────── */
+.weekRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 8px;
+}
+
+.weekDay {
+  text-align: center;
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 0;
+}
+
+.weekendText {
+  color: var(--theme-color);
+}
+
+/* ── Date grid ───────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px 2px;
+}
+
+/* ── Individual day cell ─────────────────────────── */
+.day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: var(--font-body), sans-serif;
+  font-size: clamp(0.72rem, 2vw, 0.95rem);
+  font-weight: 600;
+  color: #333;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  transition: background 0.14s, color 0.14s, transform 0.14s;
+  width: 100%;
+  max-width: 44px;
+  margin: 0 auto;
+}
+
+.dayMuted {
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+.dayWeekend {
+  color: var(--theme-color);
+}
+
+.day:hover:not(.dayMuted):not(.dayStart):not(.dayEnd) {
+  background: #f4f4f4;
+  transform: scale(1.08);
+}
+
+.dayToday {
+  border-color: var(--theme-color);
+  color: var(--theme-color);
+  font-weight: 800;
+}
+
+/* Range selection */
+.dayStart {
+  background: var(--theme-color) !important;
+  color: #fff !important;
+  border-radius: 50% 0 0 50% !important;
+  max-width: 100%;
+  border-color: transparent !important;
+}
+
+.dayEnd {
+  background: var(--theme-color) !important;
+  color: #fff !important;
+  border-radius: 0 50% 50% 0 !important;
+  max-width: 100%;
+  border-color: transparent !important;
+}
+
+/* Single day selected (start == end visually) */
+.dayStart.dayEnd {
+  border-radius: 50% !important;
+}
+
+.dayInRange {
+  background: color-mix(in srgb, var(--theme-color) 18%, transparent) !important;
+  color: var(--theme-color) !important;
+  border-radius: 0 !important;
+  max-width: 100%;
+}
+
+/* ── Trip / Event notes panel ────────────────────── */
+.rangeNoteContainer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeSlideIn 0.2s ease;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.rangeLabelPill {
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--theme-color) 15%, transparent);
+  color: var(--theme-color);
+  border-radius: 100px;
+  padding: 2px 10px;
+  letter-spacing: 0.04em;
+}
+
+.rangeNoteInput {
+  width: 100%;
+  min-height: 72px;
+  max-height: 120px;
+  border: 1.5px solid #e5e5e5;
+  border-radius: 8px;
+  background: #fafaf9;
+  resize: vertical;
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  outline: none;
+  color: #444;
+  padding: 10px 12px;
+  caret-color: var(--theme-color);
+  transition: border-color 0.18s;
+}
+
+.rangeNoteInput:focus {
+  border-color: var(--theme-color);
+  background: #fff;
+}
+
+.rangeNoteInput::placeholder {
+  color: #bbb;
+  font-style: italic;
+}
+
+/* ════════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════════ */
+
+/* ── Tablet (≤ 768px) ────────────────────────────── */
+@media (max-width: 768px) {
+  .shell {
+    padding: 24px 12px 40px;
+    align-items: flex-start;
+  }
+
+  .heroSection {
+    height: 240px;
+  }
+
+  .themeOverlay {
+    height: 130px;
+    clip-path: polygon(0 45%, 45% 0%, 100% 25%, 100% 100%, 0 100%);
+    padding: 16px 24px;
+  }
+
+  .monthLabel {
+    font-size: clamp(1.6rem, 7vw, 2.6rem);
+  }
+
+  .yearText {
+    font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+  }
+
+  /* Stack the two-column bottom section vertically */
+  .bottomSection {
+    flex-direction: column;
+  }
+
+  .notesSection {
+    flex: none;
+    border-right: none;
+    border-bottom: 1px solid #ebebeb;
+    padding: 20px 20px;
+    order: 2; /* notes BELOW calendar on tablet/mobile */
+  }
+
+  .notesInput {
+    min-height: 120px;
+  }
+
+  .gridSection {
+    order: 1;
+    padding: 20px 16px 16px;
+  }
+
+  .navMonthName {
+    font-size: 0.95rem;
+  }
+
+  .day {
+    font-size: 0.78rem;
+    max-width: 38px;
+  }
+}
+
+/* ── Mobile (≤ 480px) ────────────────────────────── */
+@media (max-width: 480px) {
+  .shell {
+    padding: 12px 6px 32px;
+  }
+
+  .calendarPaper {
+    border-radius: 4px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+
+  .bindingBar {
+    height: 14px;
+  }
+
+  .spiral {
+    width: 8px;
+    height: 8px;
+  }
+
+  .heroSection {
+    height: 190px;
+    margin-top: 14px;
+  }
+
+  .themeOverlay {
+    height: 110px;
+    padding: 12px 16px;
+    clip-path: polygon(0 40%, 45% 0%, 100% 22%, 100% 100%, 0 100%);
+  }
+
+  .monthLabel {
+    font-size: clamp(1.4rem, 8vw, 2rem);
+  }
+
+  .yearText {
+    font-size: 0.78rem;
+  }
+
+  .gridSection {
+    padding: 14px 10px 12px;
+  }
+
+  .controlsRow {
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .navBtn {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+
+  .clearBtn {
+    padding: 6px 8px;
+    font-size: 0.68rem;
+  }
+
+  .navMonthName {
+    font-size: 0.82rem;
+  }
+
+  .weekDay {
+    font-size: 0.58rem;
+  }
+
+  .day {
+    font-size: 0.7rem;
+    max-width: 34px;
+  }
+
+  .notesSection {
+    padding: 16px 14px;
+  }
+
+  .notesInput {
+    font-size: 0.82rem;
+    min-height: 100px;
+  }
+
+  .rangeNoteInput {
+    font-size: 0.82rem;
+  }
+}
