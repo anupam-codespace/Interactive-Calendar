@@ -49,9 +49,10 @@
 
 /* ── Shell: full viewport with ambient background ──────────────── */
 .shell {
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   /* Deep multi-layer cinematic background */
@@ -62,7 +63,7 @@
     linear-gradient(160deg, #0b0b14 0%, #0d0d1a 50%, #090912 100%);
   font-family: var(--font-body), 'Manrope', -apple-system, sans-serif;
   overflow: hidden;
-  padding: 20px;
+  padding: 24px 20px 20px;
 }
 
 /* Subtle animated noise texture overlay */
@@ -251,12 +252,12 @@
 
 /* ── Author credit — below calendar card, centered ── */
 .authorCredit {
-  margin-top: 14px;
+  margin-top: 22px;
   text-align: center;
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.4);
   user-select: none;
   flex-shrink: 0;
 }
