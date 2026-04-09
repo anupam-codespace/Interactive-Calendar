@@ -27,7 +27,6 @@ const ALL_IMAGES = [
   "Mario%20Vaz%20-%20Art%20Direction%20%26%20Design%20(1).jpeg",
   "Mario%20Vaz%20-%20Art%20Direction%20%26%20Design%20(2).jpeg",
   "Deep%20Patel%20-%20Brand%20Designer%20in%20Ahmedabad%2C%20India.jpeg",
-  // Extra images rotated for years beyond / fallbacks
   "Instagram.jpeg",
   "Instagram%20(1).jpeg",
   "Instagram%20(2).jpeg",
@@ -52,9 +51,7 @@ const ALL_IMAGES = [
   "download%20(1).jpeg",
 ];
 
-/** Returns a deterministic image src for a given year+month (0-based). */
 function getMonthImage(year: number, month: number): string {
-  // Seed: spread images across years too
   const index = ((year - 2024) * 12 + month) % ALL_IMAGES.length;
   return `/images/${ALL_IMAGES[(index + ALL_IMAGES.length) % ALL_IMAGES.length]}`;
 }
@@ -140,11 +137,6 @@ function getStoredRangeNotes(): SavedRangeNotes {
   }
 }
 
-/* ─── MediaItem ─────────────────────────────────────── */
-function MediaItem({ src, className }: { src: string; className: string }) {
-  return <img className={className} src={src} alt="Month visual" />;
-}
-
 /* ─── Main Component ─────────────────────────────────── */
 export function WallCalendar() {
   const today = useMemo(() => startOfDay(new Date()), []);
@@ -158,7 +150,6 @@ export function WallCalendar() {
   const [rangeNotes, setRangeNotes] = useState<SavedRangeNotes>({});
   const [mounted, setMounted] = useState(false);
 
-  // Track if the monthly note was changed by the user (not a month navigation)
   const isUserTyping = useRef(false);
 
   /* Initial load */
@@ -177,15 +168,15 @@ export function WallCalendar() {
   const monthKey = useMemo(() => formatMonthKey(currentMonth), [currentMonth]);
 
   const resolvedRangeEnd = rangeEnd ?? hoverDate;
-  // Show range note panel if start is selected (even without end)
+
+  // Active range key for notes
   const activeRangeKey = rangeStart
     ? rangeEnd
       ? formatRangeKey(rangeStart, rangeEnd)
       : formatKey(rangeStart)
     : null;
 
-  const themeColor =
-    MONTH_THEMES[currentMonth.getMonth()] || "#007bb5";
+  const themeColor = MONTH_THEMES[currentMonth.getMonth()] || "#007bb5";
   const imageSrc = getMonthImage(
     currentMonth.getFullYear(),
     currentMonth.getMonth()
@@ -227,7 +218,6 @@ export function WallCalendar() {
     setCurrentMonth((prev) => {
       const next = new Date(prev.getFullYear(), prev.getMonth() + amount, 1);
       const nextKey = formatMonthKey(next);
-      // Load the stored note for the new month
       setMonthlyNote(getStoredMonthNote(nextKey));
       setRangeStart(null);
       setRangeEnd(null);
@@ -261,155 +251,181 @@ export function WallCalendar() {
         className={styles.calendarPaper}
         style={{ "--theme-color": themeColor } as React.CSSProperties}
       >
-        {/* Binding spirals */}
+        {/* ── Binding spirals ── */}
         <div className={styles.bindingBar}>
-          {Array.from({ length: 18 }).map((_, i) => (
+          {Array.from({ length: 22 }).map((_, i) => (
             <div key={i} className={styles.spiral} />
           ))}
         </div>
 
-        {/* === HERO IMAGE === */}
-        <div className={styles.heroSection}>
-          <MediaItem src={imageSrc} className={styles.mediaItem} />
-          <div className={styles.themeOverlay}>
-            <div className={styles.headerContent}>
-              <span className={styles.yearText}>
-                {currentMonth.getFullYear()}
-              </span>
-              <span className={styles.monthLabel}>{monthLabel}</span>
+        {/* ── Main horizontal body ── */}
+        <div className={styles.mainBody}>
+
+          {/* ══ LEFT: Hero image panel ══ */}
+          <div className={styles.heroPanel}>
+            <img
+              className={styles.mediaItem}
+              src={imageSrc}
+              alt={`${monthLabel} ${currentMonth.getFullYear()} — Monthly hero image`}
+            />
+            <div className={styles.heroOverlay} />
+            <div className={styles.themeOverlay}>
+              <div className={styles.headerContent}>
+                <span className={styles.yearText}>
+                  {currentMonth.getFullYear()}
+                </span>
+                <span className={styles.monthLabel}>{monthLabel}</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* === BOTTOM: Notes + Grid === */}
-        <div className={styles.bottomSection}>
+          {/* ══ RIGHT: Calendar + notes panel ══ */}
+          <div className={styles.rightPanel}>
 
-          {/* LEFT: Monthly Notes */}
-          <aside className={styles.notesSection}>
-            <p className={styles.sectionLabel}>Notes</p>
-            <textarea
-              className={styles.notesInput}
-              value={monthlyNote}
-              onChange={(e) => {
-                isUserTyping.current = true;
-                setMonthlyNote(e.target.value);
-              }}
-              placeholder={`Jot down notes for ${monthLabel}…`}
-              aria-label={`Monthly notes for ${monthLabel}`}
-            />
-          </aside>
+            {/* Calendar area */}
+            <div className={styles.calendarArea}>
 
-          {/* RIGHT: Calendar Grid */}
-          <section className={styles.gridSection}>
-
-            {/* Nav Controls */}
-            <div className={styles.controlsRow}>
-              <button
-                className={styles.navBtn}
-                onClick={() => shiftMonth(-1)}
-                aria-label="Previous month"
-              >
-                ← Prev
-              </button>
-              <span className={styles.navMonthName}>{monthLabel} {currentMonth.getFullYear()}</span>
-              <button
-                className={styles.navBtn}
-                onClick={() => shiftMonth(1)}
-                aria-label="Next month"
-              >
-                Next →
-              </button>
-              {(rangeStart || rangeEnd) && (
+              {/* Nav controls */}
+              <div className={styles.controlsRow}>
                 <button
-                  className={styles.clearBtn}
-                  onClick={() => { setRangeStart(null); setRangeEnd(null); }}
-                  aria-label="Clear selection"
+                  className={styles.navBtn}
+                  onClick={() => shiftMonth(-1)}
+                  aria-label="Previous month"
                 >
-                  ✕ Clear
+                  ← Prev
                 </button>
-              )}
-            </div>
-
-            {/* Week day headers */}
-            <div className={styles.weekRow}>
-              {WEEK_DAYS.map((d, i) => (
-                <span
-                  key={d}
-                  className={`${styles.weekDay} ${i >= 5 ? styles.weekendText : ""}`}
-                >
-                  {d}
+                <span className={styles.navMonthName}>
+                  {monthLabel} {currentMonth.getFullYear()}
                 </span>
-              ))}
-            </div>
-
-            {/* Date grid */}
-            <div className={styles.grid}>
-              {days.map(({ date, inCurrentMonth }) => {
-                const isStart = sameDay(date, rangeStart);
-                const isEnd = sameDay(date, rangeEnd);
-                const inRange =
-                  rangeStart &&
-                  resolvedRangeEnd &&
-                  startOfDay(date).getTime() >
-                    Math.min(
-                      rangeStart.getTime(),
-                      resolvedRangeEnd.getTime()
-                    ) &&
-                  startOfDay(date).getTime() <
-                    Math.max(
-                      rangeStart.getTime(),
-                      resolvedRangeEnd.getTime()
-                    );
-                const isToday = sameDay(date, today);
-                const isWeekend =
-                  date.getDay() === 0 || date.getDay() === 6;
-                const isSelected = isStart || isEnd;
-
-                return (
+                <button
+                  className={styles.navBtn}
+                  onClick={() => shiftMonth(1)}
+                  aria-label="Next month"
+                >
+                  Next →
+                </button>
+                {(rangeStart || rangeEnd) && (
                   <button
-                    key={formatKey(date)}
-                    className={[
-                      styles.day,
-                      !inCurrentMonth ? styles.dayMuted : "",
-                      isWeekend && !isSelected ? styles.dayWeekend : "",
-                      isStart ? styles.dayStart : "",
-                      isEnd ? styles.dayEnd : "",
-                      inRange ? styles.dayInRange : "",
-                      isToday && !isSelected ? styles.dayToday : "",
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
-                    onClick={() => selectDay(date)}
-                    onMouseEnter={() => setHoverDate(date)}
-                    onMouseLeave={() => setHoverDate(null)}
-                    aria-label={date.toDateString()}
-                    aria-pressed={isSelected}
+                    className={styles.clearBtn}
+                    onClick={() => { setRangeStart(null); setRangeEnd(null); }}
+                    aria-label="Clear selection"
                   >
-                    {date.getDate()}
+                    ✕ Clear
                   </button>
-                );
-              })}
+                )}
+              </div>
+
+              {/* Week day headers */}
+              <div className={styles.weekRow}>
+                {WEEK_DAYS.map((d, i) => (
+                  <span
+                    key={d}
+                    className={`${styles.weekDay} ${i >= 5 ? styles.weekendText : ""}`}
+                  >
+                    {d}
+                  </span>
+                ))}
+              </div>
+
+              {/* Date grid */}
+              <div className={styles.grid}>
+                {days.map(({ date, inCurrentMonth }) => {
+                  const isStart = sameDay(date, rangeStart);
+                  const isEnd = sameDay(date, rangeEnd);
+                  const inRange =
+                    rangeStart &&
+                    resolvedRangeEnd &&
+                    startOfDay(date).getTime() >
+                      Math.min(
+                        rangeStart.getTime(),
+                        resolvedRangeEnd.getTime()
+                      ) &&
+                    startOfDay(date).getTime() <
+                      Math.max(
+                        rangeStart.getTime(),
+                        resolvedRangeEnd.getTime()
+                      );
+                  const isToday = sameDay(date, today);
+                  const isWeekend =
+                    date.getDay() === 0 || date.getDay() === 6;
+                  const isSelected = isStart || isEnd;
+
+                  return (
+                    <button
+                      key={formatKey(date)}
+                      className={[
+                        styles.day,
+                        !inCurrentMonth ? styles.dayMuted : "",
+                        isWeekend && !isSelected ? styles.dayWeekend : "",
+                        isStart ? styles.dayStart : "",
+                        isEnd ? styles.dayEnd : "",
+                        inRange ? styles.dayInRange : "",
+                        isToday && !isSelected ? styles.dayToday : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                      onClick={() => selectDay(date)}
+                      onMouseEnter={() => setHoverDate(date)}
+                      onMouseLeave={() => setHoverDate(null)}
+                      aria-label={date.toDateString()}
+                      aria-pressed={isSelected}
+                    >
+                      {date.getDate()}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Trip / Event Notes – shown when any date is selected */}
-            {activeRangeKey && (
-              <div className={styles.rangeNoteContainer}>
+            {/* ── Notes area ── */}
+            <div className={styles.notesArea}>
+
+              {/* Monthly notes */}
+              <div className={styles.monthlyNotesCol}>
                 <p className={styles.sectionLabel}>
-                  Trip / Event Notes
-                  {rangeLabel && (
-                    <span className={styles.rangeLabelPill}>{rangeLabel}</span>
-                  )}
+                  📝 Month Goals
                 </p>
                 <textarea
-                  className={styles.rangeNoteInput}
-                  value={activeRangeNote}
-                  onChange={(e) => updateRangeNote(e.target.value)}
-                  placeholder="Add notes for this date or range…"
-                  aria-label="Trip or event notes for selected dates"
+                  className={styles.notesInput}
+                  value={monthlyNote}
+                  onChange={(e) => {
+                    isUserTyping.current = true;
+                    setMonthlyNote(e.target.value);
+                  }}
+                  placeholder={`Goals for ${monthLabel}…`}
+                  aria-label={`Monthly goals for ${monthLabel}`}
                 />
               </div>
-            )}
-          </section>
+
+              {/* Range / event notes */}
+              <div className={styles.rangeNotesCol}>
+                {activeRangeKey ? (
+                  <>
+                    <p className={styles.sectionLabel}>
+                      🗓 Event Notes
+                      {rangeLabel && (
+                        <span className={styles.rangeLabelPill}>{rangeLabel}</span>
+                      )}
+                    </p>
+                    <textarea
+                      className={styles.rangeNoteInput}
+                      value={activeRangeNote}
+                      onChange={(e) => updateRangeNote(e.target.value)}
+                      placeholder="Add notes for this date or range…"
+                      aria-label="Trip or event notes for selected dates"
+                    />
+                  </>
+                ) : (
+                  <div className={styles.rangeNotesEmpty}>
+                    <span className={styles.emptyIcon}>📅</span>
+                    Select a date to add event notes
+                  </div>
+                )}
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </div>
     </main>
